@@ -1,20 +1,20 @@
 module.exports = function(sequelize, DataTypes) {
-  //create sequelize model here- currently just example, not being used
   var User = sequelize.define("User", {
-    user_name: {
+    username: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: [1]
-      }
-    }, 
-    some_other_data: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: 0
+        len: [6,20]
+      },
+      unique: true
     },
-    date: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    team: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   });
   return User;

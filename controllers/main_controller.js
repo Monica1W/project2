@@ -1,44 +1,77 @@
-var express = require("express");
-var router = express.Router(); 
+// *********************************************************************************
+// api-routes.js - this file offers a set of routes for displaying and saving data to the db
+// *********************************************************************************
+
+// Dependencies
+// =============================================================
+
+// Requiring our models
 var db = require("../models");
+var bcrypt = require('bcrypt');
+var jwt = require('jsonwebtoken');
+var express = require('express');
+var apiRouter = express.Router();
 
-//first route could pull in all stats for the loged-in user team, or if not loggged in can re-route them to signup/signin page
-router.get("/", function(req, res) {
+var salt = '$2a$10$.zvkhL71NZo804bNdFdBae';
 
-    //currently we have no db, so just render empty index page
-    res.render("index");
-
-    /*db.User.findAll({
-      order: '`User_name` ASC'
-    }).then(function(dbUser) { 
-      var UserObject = {
-        users: dbUser
-      };       
-      res.render("index", UserObject);
-    });*/
+apiRouter.get("/test", function(req, res) {
+  res.status(200).json({ 'message': 'Success'})
 });
 
-//example route for posting
-/*router.post("/insert", function(req, res) { 
+
+
+// POST route for creating a new user
+apiRouter.post("/user", function(req, res) {
+  bcrypt.hash(req.body.password, salt, function(err, hash) {
+    // Store hash in your password DB.
+    // TODO: update schema to enforce unique usernames
     db.User.create({
-      user_name: req.body.newUser
-    }).then(function(dbUser) { 
-      res.redirect("/");
-    });
-});*/
+      username: req.body.username,
+      password: hash
+    })
+      .then(function(dbPost) {
+        res.status(200).json({'status': 'success'});
+      })
+      .catch(function (err) {
+        res.status(500).send(err);
+      })
+  });
 
-//example route to update/put
-/*router.put("/:id", function(req, res) { 
-    db.User.update({
-      some_other_data: 1
-    }, {
-      where: {
-        id: req.params.id
+});
+
+apiRouter.post("/user/signin", function(req, res) {
+  db.User.findOne({
+    username: req.body.username
+  })
+    .then(function(user) {
+      if (!user) {
+        console.log('no user found')
+        res.status(400).json({
+          'status' : 'Invalid username or password'
+        })
+      } else {
+        bcrypt.compare(req.body.password, user.password, function(err, valid) {
+          if (err || !valid) {
+            res.status(400).json({
+              'status' : 'Invalid username or password'
+            })
+          } else {
+            var userToken = jwt.sign({
+              exp: Math.floor(Date.now() / 1000) + (60 * 60),
+              data: user.id
+            }, 'randomsecretforsigningjwt');
+            res.status(200).json({
+              id: user.id,
+              username: user.username,
+              token: userToken
+            });
+          }
+        });
       }
-    }).then(function(dbUser) {
-      res.redirect("/");
+
     });
-});*/
+});
 
-
-module.exports = router;
+// Routes
+// =============================================================
+module.exports = apiRouter;
