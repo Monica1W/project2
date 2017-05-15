@@ -1,5 +1,5 @@
 // *********************************************************************************
-// api-routes.js - this file offers a set of routes for displaying and saving data to the db
+// main_controller.js - this file offers a set of routes for displaying and saving data to the db
 // *********************************************************************************
 
 // Dependencies
@@ -27,6 +27,7 @@ apiRouter.post("/user", function(req, res) {
     // TODO: update schema to enforce unique usernames
     db.User.create({
       username: req.body.username,
+      email: req.body.email,
       password: hash
     })
       .then(function(dbPost) {
