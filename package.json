@@ -17,9 +17,11 @@
   },
   "homepage": "https://github.com/",
   "dependencies": {
+    "bcrypt": "^1.0.2",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "express-handlebars": "^3.0.0",
+    "jsonwebtoken": "^7.4.0",
     "method-override": "^2.3.8",
     "mysql": "^2.13.0",
     "sequelize": "^3.30.4",

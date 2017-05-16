@@ -3,8 +3,10 @@ var express = require("express"),
 	methodOverride = require("method-override");
 
 var app = express();
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8080;
 var db = require("./models");
+
+var jwt= require('jsonwebtoken');
  
 app.use(express.static(process.cwd() + "/public")); 
 app.use(bodyParser.urlencoded({ extended: false })); 
@@ -21,10 +23,30 @@ app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 //routes
-var routes = require("./controllers/main_controller.js");
+var api = require("./controllers/main_controller.js");
 
-app.use("/", routes);
-
+app.use('/api', api);
+app.use('/api/secure', function (req, res, next) {
+  // check authorization
+  // if authorized next()
+  if (!req.header('Authorization')) {
+    res.status(401).json({ 'status': 'Not Authorized'});
+  } else {
+    jwt.verify(req.header('Authorization'), 'randomsecretforsigningjwt', function(err, decoded) {
+      if (err) {
+        console.log('err', err)
+        res.status(401).json({ 'status': 'Not Authorized'});
+      } else {
+        console.log(decoded.data) // bar
+        // query db for privileges for user
+        // add to req.privs
+        next();
+      }
+    });
+  }
+  
+});
+app.use('/api/secure', api);
 
 db.sequelize.sync({/* force: true */}).then(function() {
   app.listen(port, function() {
