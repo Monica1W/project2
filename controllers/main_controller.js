@@ -28,10 +28,12 @@ apiRouter.post("/user", function(req, res) {
     db.User.create({
       username: req.body.username,
       email: req.body.email,
-      password: hash
+      password: hash,
+      team: req.body.team
     })
       .then(function(dbPost) {
         res.status(200).json({'status': 'success'});
+
       })
       .catch(function (err) {
         res.status(500).send(err);
@@ -72,6 +74,7 @@ apiRouter.post("/user/signin", function(req, res) {
 
     });
 });
+
 
 // Routes
 // =============================================================

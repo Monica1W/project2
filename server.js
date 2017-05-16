@@ -4,6 +4,7 @@ var express = require("express"),
 
 var app = express();
 var port = process.env.PORT || 8080;
+
 var db = require("./models");
 
 var jwt= require('jsonwebtoken');

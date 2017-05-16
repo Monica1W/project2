@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     team: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     }
   });
   return User;
