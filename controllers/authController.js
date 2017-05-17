@@ -81,7 +81,7 @@ authRouter.post("/signIn", function(req, res) {
             var jwtAuthToken = jwt.sign(payload, gtGroupSecret);
             // Create a cookie embedding JWT token
             res.cookie('jwtAuthToken', jwtAuthToken, {
-              secure: true,
+              secure: process.env.NODE_ENV === "production",
               signed: true
             });
             res.end();
