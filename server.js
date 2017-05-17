@@ -2,7 +2,7 @@ var express = require("express"),
   bodyParser = require("body-parser"),
   methodOverride = require("method-override");
   cookieParser= require("cookie-parser");
-  
+
 var app = express();
 var port = process.env.PORT || 8080;
 
@@ -42,7 +42,21 @@ var gtGroupSecret = process.env.GT_GROUP_SECRET || 'ImTooLazyToWriteMyOwnSecretE
 app.use(cookieParser(gtGroupSecret));
 
 app.use('/auth', auth);
+
+app.use('/app', jwtExp({
+  secret: gtGroupSecret,
+  getToken: function fromCookie(req) {
+    if (req.signedCookies) {
+      return req.signedCookies.jwtAuthToken;
+    }
+    return null;
+  }
+}));
 app.use('/app', appPages);
+
+app.use('/api', jwtExp({
+  secret: gtGroupSecret
+}));
 app.use('/api', appApi);
 
 app.get("/", jwtExp({
