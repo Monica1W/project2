@@ -84,9 +84,8 @@ authRouter.post("/signIn", function(req, res) {
               secure: process.env.NODE_ENV === "production",
               signed: true
             });
-            res.end();
-            //res.redirect('/app')
-              //see recipe for cookie
+            res.redirect('/app')
+              
           }
         });
       }

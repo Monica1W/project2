@@ -43,6 +43,11 @@ app.use(cookieParser(gtGroupSecret));
 
 app.use('/auth', auth);
 
+app.use('/app', function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.redirect('/');
+  }
+});
 app.use('/app', jwtExp({
   secret: gtGroupSecret,
   getToken: function fromCookie(req) {
@@ -54,6 +59,16 @@ app.use('/app', jwtExp({
 }));
 app.use('/app', appPages);
 
+app.use('/api', function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({ 'message': 'Not Authorized', details: err });
+  }
+});
+app.use('/app', function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.redirect('/');
+  }
+});
 app.use('/api', jwtExp({
   secret: gtGroupSecret
 }));
