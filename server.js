@@ -25,8 +25,8 @@ app.set("view engine", "handlebars");
 
 //routes
 var api = require("./controllers/main_controller.js");
-app.get("/:team", function(req, res) {
-  res.render("index");
+app.get("/", function(req, res) {
+  res.render("sign-in");
 })
 
 app.use('/api', api);
