@@ -25,6 +25,9 @@ app.set("view engine", "handlebars");
 
 //routes
 var api = require("./controllers/main_controller.js");
+app.get("/:team", function(req, res) {
+  res.render("index");
+})
 
 app.use('/api', api);
 app.use('/api/secure', function (req, res, next) {
